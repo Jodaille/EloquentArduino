@@ -1,8 +1,8 @@
-#define CAMERA_MODEL_M5STACK_WIDE
+#define CAMERA_MODEL_AI_THINKER
 
 #include <FS.h>
 #include <SPIFFS.h>
-#include <eloquentarduino.h>
+#include <EloquentArduino.h>
 #include <eloquentarduino/io/serial_print.h>
 #include <eloquentarduino/vision/camera/ESP32Camera.h>
 #include <eloquentarduino/vision/io/writers/JpegWriter.h>
@@ -69,7 +69,7 @@ void loop() {
         // stream();
 
         // uncomment to stream downscaled imaged tp Python script
-        // stream_downscaled();
+        stream_downscaled();
 
         delay(1000);
     }
@@ -111,6 +111,6 @@ void stream() {
 
 void stream_downscaled() {
     eloquent::io::print_all("START OF DOWNSCALED");
-    eloquent::io::print_array(downscaled, w * h);
+    eloquent::io::print_array(motion.getdiff(), w * h);
     eloquent::io::print_all("END OF DOWNSCALED");
 }

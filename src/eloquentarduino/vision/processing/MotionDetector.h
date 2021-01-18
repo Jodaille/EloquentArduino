@@ -32,6 +32,7 @@ namespace Eloquent {
                     for (uint16_t i = 0; i < pixels(); i++) {
                         _curr[i] = 0;
                         _prev[i] = 0;
+                        _diff[i] = 0;
                     }
                 }
 
@@ -54,6 +55,7 @@ namespace Eloquent {
                     for (uint16_t i = 0; i < pixels(); i++) {
                         _prev[i] = _smoothCurr * _curr[i] + _smoothPrev * _prev[i];
                         _curr[i] = image[i];
+                        _diff[i] = 0;
                     }
                 }
 
@@ -96,6 +98,11 @@ namespace Eloquent {
                     _debouncing = 0;
                 }
 
+
+                uint8_t* getdiff() {
+                    return _diff;
+                }
+
                 /**
                  * Detect how many pixels changed by at least a given threshold
                  * @param image
@@ -114,8 +121,13 @@ namespace Eloquent {
                             float prev = _prev[i];
                             float delta = ((float) abs(current - prev)) / (prev != 0 ? prev : 1);
 
-                            if (delta >= _diffThreshold)
+                            if (delta >= _diffThreshold) {
                                 _changes += 1;
+                                _diff[i] = _curr[i];
+
+                            } else {
+                                _diff[i] = 0;
+                            }
                         }
                     } else {
                         // absolute threshold
@@ -124,8 +136,16 @@ namespace Eloquent {
                             float prev = _prev[i];
                             float delta = abs(current - prev);
 
-                            if (delta >= _diffThreshold)
+                            if (delta >= _diffThreshold) {
                                 _changes += 1;
+                                _diff[i] = _curr[i];
+
+                            } else {
+                                _diff[i] = 0;
+
+                            }
+
+
                         }
                     }
 
@@ -183,6 +203,7 @@ namespace Eloquent {
             protected:
                 uint8_t _curr[sourceWidth * sourceHeight];
                 uint8_t _prev[sourceWidth * sourceHeight];
+                uint8_t _diff[sourceWidth * sourceHeight];
                 float _smoothCurr;
                 float _smoothPrev;
                 float _diffThreshold;
